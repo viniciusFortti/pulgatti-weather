@@ -4,8 +4,8 @@ COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle build --no-daemon -x test
 
-# Estágio 2: Execução da aplicação
-FROM openjdk:26-slim
+# Estágio 2: Execução da aplicação (Usando Temurin Java 26 Alpino/Slim)
+FROM eclipse-temurin:26-jre
 EXPOSE 8080
 RUN mkdir /app
 COPY --from=build /home/gradle/src/build/libs/*-SNAPSHOT.jar /app/pulgatti-weather.jar
