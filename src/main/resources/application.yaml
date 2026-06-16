@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: pulgatti-weather
+
+  # Configuração de Conexão com o PostgreSQL do Docker
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pulgatti_weather
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  # Configurações do Hibernate / JPA
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+  # Configuração do Redis do Docker
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  # Cache (Spring Cache Abstraction sobre Redis)
+  cache:
+    type: redis
+
+  # Configuração do Apache Kafka do Docker
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: weather-group
+      auto-offset-reset: earliest
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.vinicius.dev.pulgattiwather.history.dto"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+# Configurações específicas da aplicação
+app:
+  jwt:
+    secret: /0r0MEgSbOh6oud4Y3vYNB41QZq5fOtOmdjric9molCO58M8QGzo0k/whdUApLXi3ewy+aKGIdua4dUopiKTiQ==
+    expiration-minutes: 60
+  open-meteo:
+    geocoding-base-url: https://geocoding-api.open-meteo.com/v1
+    forecast-base-url: https://api.open-meteo.com/v1
+  kafka:
+    search-history-topic: search-history-events
+  cache:
+    weather-forecast-ttl-hours: 24
