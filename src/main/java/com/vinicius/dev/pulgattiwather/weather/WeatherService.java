@@ -34,14 +34,12 @@ public class WeatherService {
         publishSearchHistoryEvent(city, currentWeather);
 
         return new WeatherForecastResponse(
-                city.getCityName(),
-                city.getState(),
-                city.getLatitude(),
-                city.getLongitude(),
-                currentWeather.temperature(),
-                currentWeather.windspeed(),
-                currentWeather.weathercode(),
-                currentWeather.time());
+                forecast.latitude(),
+                forecast.longitude(),
+                currentWeather,
+                forecast.hourly(),
+                forecast.daily(),
+                city.getCityName());
     }
 
     private void publishSearchHistoryEvent(CityCoordinates city, ForecastApiResponse.CurrentWeather currentWeather) {

@@ -29,7 +29,7 @@ public class ForecastCacheService {
         String key = CACHE_KEY_PREFIX + latitude + ":" + longitude;
 
         ForecastApiResponse cached = redisTemplate.opsForValue().get(key);
-        if (cached != null) {
+        if (cached != null && cached.hourly() != null) {
             return cached;
         }
 

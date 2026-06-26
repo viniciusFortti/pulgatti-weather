@@ -1,15 +1,15 @@
 package com.vinicius.dev.pulgattiwather.weather.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
 public record WeatherForecastResponse(
-        String cityName,
-        String state,
         BigDecimal latitude,
         BigDecimal longitude,
-        BigDecimal temperature,
-        BigDecimal windspeed,
-        Integer weatherCode,
-        String observedAt
+        @JsonProperty("current_weather") ForecastApiResponse.CurrentWeather currentWeather,
+        ForecastApiResponse.HourlyData hourly,
+        ForecastApiResponse.DailyData daily,
+        String city
 ) {
 }

@@ -24,6 +24,9 @@ public class ForecastClient {
                             .queryParam("latitude", latitude)
                             .queryParam("longitude", longitude)
                             .queryParam("current_weather", true)
+                            .queryParam("hourly", "temperature_2m,relativehumidity_2m,precipitation,weathercode,windspeed_10m,apparent_temperature")
+                            .queryParam("daily", "weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max,precipitation_probability_max")
+                            .queryParam("timezone", "auto")
                             .build())
                     .retrieve()
                     .body(ForecastApiResponse.class);
