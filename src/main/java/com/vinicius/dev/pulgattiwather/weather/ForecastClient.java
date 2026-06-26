@@ -3,6 +3,7 @@ package com.vinicius.dev.pulgattiwather.weather;
 import com.vinicius.dev.pulgattiwather.common.exception.ExternalApiException;
 import com.vinicius.dev.pulgattiwather.weather.dto.ForecastApiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.math.BigDecimal;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ForecastClient {
@@ -31,8 +33,11 @@ public class ForecastClient {
                     .retrieve()
                     .body(ForecastApiResponse.class);
         } catch (RestClientException ex) {
+            log.error("Open-Meteo forecast call failed for lat={} lon={}: [{}] {}",
+                    latitude, longitude, ex.getClass().getSimpleName(), ex.getMessage(), ex);
             throw new ExternalApiException(
-                    "Failed to call forecast API for coordinates: " + latitude + ", " + longitude, ex);
+                    "Failed to call forecast API for coordinates: " + latitude + ", " + longitude
+                    + " — " + ex.getClass().getSimpleName() + ": " + ex.getMessage(), ex);
         }
     }
 }
