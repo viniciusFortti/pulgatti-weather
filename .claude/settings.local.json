@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./gradlew compileJava)"
+      "Bash(./gradlew compileJava)",
+      "Bash(curl -s https://pulgatti-weather.onrender.com/api/weather/forecast?city=Porto%20Alegre -H 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGF1ZGUudGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTc4MjQ4NTQ3NCwiZXhwIjoxNzgyNDg5MDc0fQ.vpLMZaEEVjPkpn3C_xeSLForNTPCKdocA0hA6l3f5oHiXBXjTmEU3V3y0VhqOJ6xVqyhTofrutxAo3ZtqywOZw')",
+      "Bash(python3 -c ' *)"
     ]
   }
 }

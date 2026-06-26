@@ -28,7 +28,12 @@ public class ForecastCacheService {
     public ForecastApiResponse getCurrentWeather(BigDecimal latitude, BigDecimal longitude) {
         String key = CACHE_KEY_PREFIX + latitude + ":" + longitude;
 
-        ForecastApiResponse cached = redisTemplate.opsForValue().get(key);
+        ForecastApiResponse cached = null;
+        try {
+            cached = redisTemplate.opsForValue().get(key);
+        } catch (Exception ignored) {
+            // Entrada antiga (formato sem hourly/daily) ou falha de conexão — trata como cache miss
+        }
         if (cached != null && cached.hourly() != null) {
             return cached;
         }
