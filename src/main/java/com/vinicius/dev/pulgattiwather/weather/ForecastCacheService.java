@@ -2,6 +2,7 @@ package com.vinicius.dev.pulgattiwather.weather;
 
 import com.vinicius.dev.pulgattiwather.weather.dto.ForecastApiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -9,10 +10,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.Duration;
 
-/**
- * Cache-aside lookup for the forecast API, backed directly by Redis (not the
- * Spring Cache abstraction) so the TTL and key format stay explicit.
- */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ForecastCacheService {
@@ -31,15 +29,24 @@ public class ForecastCacheService {
         ForecastApiResponse cached = null;
         try {
             cached = redisTemplate.opsForValue().get(key);
-        } catch (Exception ignored) {
-            // Entrada antiga (formato sem hourly/daily) ou falha de conexão — trata como cache miss
+        } catch (Exception ex) {
+            log.warn("Redis cache read failed for key={}: [{}] {}", key, ex.getClass().getSimpleName(), ex.getMessage());
         }
         if (cached != null && cached.hourly() != null) {
+            log.debug("Cache HIT for key={}", key);
             return cached;
         }
+        log.debug("Cache MISS for key={}", key);
 
         ForecastApiResponse forecast = forecastClient.fetchCurrentWeather(latitude, longitude);
-        redisTemplate.opsForValue().set(key, forecast, Duration.ofHours(ttlHours));
+
+        try {
+            redisTemplate.opsForValue().set(key, forecast, Duration.ofHours(ttlHours));
+            log.debug("Cache WRITE OK for key={}", key);
+        } catch (Exception ex) {
+            log.error("Redis cache write failed for key={}: [{}] {}", key, ex.getClass().getSimpleName(), ex.getMessage(), ex);
+        }
+
         return forecast;
     }
 }

@@ -27,6 +27,11 @@ public class GlobalExceptionHandler {
         return problem(HttpStatus.UNAUTHORIZED, "Invalid email or password");
     }
 
+    @ExceptionHandler(ExternalApiRateLimitException.class)
+    public ProblemDetail handleExternalApiRateLimit(ExternalApiRateLimitException ex) {
+        return problem(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+    }
+
     @ExceptionHandler(ExternalApiException.class)
     public ProblemDetail handleExternalApi(ExternalApiException ex) {
         return problem(HttpStatus.BAD_GATEWAY, ex.getMessage());

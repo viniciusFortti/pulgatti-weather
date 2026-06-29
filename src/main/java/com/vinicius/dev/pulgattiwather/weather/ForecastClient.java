@@ -1,11 +1,13 @@
 package com.vinicius.dev.pulgattiwather.weather;
 
 import com.vinicius.dev.pulgattiwather.common.exception.ExternalApiException;
+import com.vinicius.dev.pulgattiwather.common.exception.ExternalApiRateLimitException;
 import com.vinicius.dev.pulgattiwather.weather.dto.ForecastApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -32,6 +34,9 @@ public class ForecastClient {
                             .build())
                     .retrieve()
                     .body(ForecastApiResponse.class);
+        } catch (HttpClientErrorException.TooManyRequests ex) {
+            log.warn("Open-Meteo rate limit hit for lat={} lon={}", latitude, longitude);
+            throw new ExternalApiRateLimitException("Weather forecast service is temporarily unavailable (rate limit). Please try again later.", ex);
         } catch (RestClientException ex) {
             log.error("Open-Meteo forecast call failed for lat={} lon={}: [{}] {}",
                     latitude, longitude, ex.getClass().getSimpleName(), ex.getMessage(), ex);
